@@ -23,7 +23,107 @@ marked.setOptions({
     breaks: true
 });
 import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import dynamic from 'next/dynamic';
+
+// Динамический импорт MDXEditor и плагинов
+const MDXEditorComponent = dynamic(
+  () => import('@mdxeditor/editor').then(mod => {
+    const { 
+      MDXEditor, 
+      toolbarPlugin, 
+      headingsPlugin, 
+      listsPlugin, 
+      quotePlugin, 
+      markdownShortcutPlugin, 
+      BoldItalicUnderlineToggles,
+      UndoRedo,
+      BlockTypeSelect,
+      CreateLink,
+      InsertImage,
+      InsertThematicBreak,
+      ListsToggle,
+      CodeToggle,
+      InsertCodeBlock,
+      DiffSourceToggleWrapper,
+      ConditionalContents,
+      diffSourcePlugin,
+      InsertTable,
+      tablePlugin,
+      codeBlockPlugin,
+      sandpackPlugin,
+      codeMirrorPlugin,
+      directivesPlugin,
+      frontmatterPlugin,
+      imagePlugin,
+      linkPlugin,
+      linkDialogPlugin,
+      thematicBreakPlugin,
+      AdmonitionDirectiveDescriptor,
+      KitchenSinkToolbar
+    } = mod;
+    return {
+      default: ({ markdown, onChange, ...props }: { markdown: string; onChange: (value: string) => void; [key: string]: any }) => (
+        <MDXEditor
+          markdown={markdown}
+          onChange={onChange}
+          {...props}
+          plugins={[
+            toolbarPlugin({
+              toolbarContents: () => (
+                <>
+                  <UndoRedo />
+                  <BoldItalicUnderlineToggles />
+                  <BlockTypeSelect />
+                  <CreateLink />
+                  <InsertImage />
+                  <InsertThematicBreak />
+                  <ListsToggle />
+                  <CodeToggle />
+                  <InsertCodeBlock />
+                  <InsertTable />
+                </>
+              )
+            }),
+            headingsPlugin(),
+            listsPlugin(),
+            quotePlugin(),
+            markdownShortcutPlugin(),
+            diffSourcePlugin(),
+            tablePlugin(),
+            codeBlockPlugin({
+              defaultCodeBlockLanguage: 'javascript'
+            }),
+            codeMirrorPlugin({
+              codeBlockLanguages: {
+                js: 'JavaScript',
+                javascript: 'JavaScript',
+                jsx: 'JavaScript (React)',
+                tsx: 'TypeScript (React)',
+                typescript: 'TypeScript',
+                html: 'HTML',
+                css: 'CSS',
+                python: 'Python',
+                php: 'PHP',
+                sql: 'SQL',
+                shell: 'Shell',
+                bash: 'Bash',
+                plaintext: 'Plain Text'
+              }
+            }),
+            directivesPlugin(),
+            frontmatterPlugin(),
+            imagePlugin(),
+            linkPlugin(),
+            linkDialogPlugin(),
+            thematicBreakPlugin()
+          ]}
+        />
+      )
+    };
+  }),
+  { ssr: false }
+);
 
 interface TopicData {
     title?: string;
@@ -46,7 +146,12 @@ interface PageProps {
 const CONTENT_DIR = path.join(process.cwd(), "content");
 
 export async function getStaticPaths() {
-    const files = fs.readdirSync(CONTENT_DIR);
+    const allFiles = fs.readdirSync(CONTENT_DIR);
+    const files = allFiles.filter(file => {
+        const filePath = path.join(CONTENT_DIR, file);
+        return file.endsWith('.md') && fs.statSync(filePath).isFile();
+    });
+
     const paths: { params: { topic: string; subtopic: string } }[] = [];
 
     for (const file of files) {
@@ -72,7 +177,12 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }: { params: { topic: string; subtopic: string } }) {
     const { topic, subtopic } = params;
-    const files = fs.readdirSync(CONTENT_DIR);
+    const allFiles = fs.readdirSync(CONTENT_DIR);
+    const files = allFiles.filter(file => {
+        const filePath = path.join(CONTENT_DIR, file);
+        return file.endsWith('.md') && fs.statSync(filePath).isFile();
+    });
+
     const topics = files.map((file) => file.replace(/\.md$/, ""));
 
     // Получаем данные для всех тем
@@ -141,6 +251,7 @@ marked.use({
 export default function SubtopicPage({ content, currentData, topics, topicsData, topic, subtopic }: PageProps) {
     const [editMode, setEditMode] = useState(false);
     const [text, setText] = useState(content);
+    const editorRef = useRef<any>(null);
     const router = useRouter();
 
     useEffect(() => {
@@ -149,13 +260,30 @@ export default function SubtopicPage({ content, currentData, topics, topicsData,
     }, [content]);
 
     const saveContent = async () => {
-        await fetch("/api/save", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ slug: `${topic}/${subtopic}`, content: text }),
-        });
-        setEditMode(false);
-        router.replace(router.asPath);
+        try {
+            console.log('Saving content:', { topic, subtopic, textLength: text.length });
+            const payload = { slug: `${topic}/${subtopic}`, content: text };
+            console.log('Request payload:', payload);
+
+            const response = await fetch("/api/save", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                console.error('Save error:', error);
+                alert('Ошибка при сохранении');
+                return;
+            }
+
+            setEditMode(false);
+            router.replace(router.asPath);
+        } catch (error) {
+            console.error('Save error:', error);
+            alert('Ошибка при сохранении');
+        }
     };
 
     return (
@@ -208,13 +336,15 @@ export default function SubtopicPage({ content, currentData, topics, topicsData,
                     </>
                 ) : (
                     <>
-                        <textarea
-                            value={text}
-                            onChange={(e) => setText(e.target.value)}
-                            className="form-control mb-4"
-                            rows={10}
-                        />
-                        <button
+                        <div style={{ minHeight: '500px' }}>
+                            <MDXEditorComponent
+                                markdown={text}
+                                onChange={(val: string) => setText(val)}
+                                contentEditableClassName="content-wrapper"
+                            />
+                        </div>
+                        <div className="mt-3">
+                            <button
                             className="btn btn-success me-2"
                             onClick={saveContent}
                         >
@@ -225,7 +355,8 @@ export default function SubtopicPage({ content, currentData, topics, topicsData,
                             onClick={() => setEditMode(false)}
                         >
                             Отмена
-                        </button>
+                            </button>
+                        </div>
                     </>
                 )}
             </main>

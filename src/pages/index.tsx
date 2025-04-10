@@ -6,7 +6,13 @@ import Sidebar from "../components/Sidebar";
 const CONTENT_DIR = path.join(process.cwd(), "content");
 
 export async function getStaticProps() {
-  const files = fs.readdirSync(CONTENT_DIR);
+  // Получаем список файлов и фильтруем только .md файлы
+  const allFiles = fs.readdirSync(CONTENT_DIR);
+  const files = allFiles.filter(file => {
+    const filePath = path.join(CONTENT_DIR, file);
+    return file.endsWith('.md') && fs.statSync(filePath).isFile();
+  });
+
   const topics = files.map((file) => file.replace(/\.md$/, ""));
 
   // Получаем данные для всех тем

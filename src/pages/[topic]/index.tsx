@@ -28,7 +28,12 @@ interface PageProps {
 const CONTENT_DIR = path.join(process.cwd(), "content");
 
 export async function getStaticPaths() {
-    const files = fs.readdirSync(CONTENT_DIR);
+    const allFiles = fs.readdirSync(CONTENT_DIR);
+    const files = allFiles.filter(file => {
+        const filePath = path.join(CONTENT_DIR, file);
+        return file.endsWith('.md') && fs.statSync(filePath).isFile();
+    });
+
     const paths = files.map((file) => ({
         params: { topic: file.replace(/\.md$/, "") },
     }));
@@ -38,7 +43,12 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }: { params: { topic: string } }) {
     const { topic } = params;
-    const files = fs.readdirSync(CONTENT_DIR);
+    const allFiles = fs.readdirSync(CONTENT_DIR);
+    const files = allFiles.filter(file => {
+        const filePath = path.join(CONTENT_DIR, file);
+        return file.endsWith('.md') && fs.statSync(filePath).isFile();
+    });
+
     const topics = files.map((file) => file.replace(/\.md$/, ""));
 
     // Получаем данные для всех тем
