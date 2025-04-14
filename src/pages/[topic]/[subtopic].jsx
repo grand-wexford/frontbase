@@ -27,9 +27,16 @@ import {
     InsertCodeBlock,
     InsertTable,
     InsertThematicBreak,
+    codeMirrorPlugin,
     InsertQuote,
     Frontmatter,
-    LinkDialog
+    LinkDialog,
+    CodeMirrorEditor,
+    sandpackPlugin,
+    ConditionalContents,
+    ChangeCodeMirrorLanguage,
+    ShowSandpackInfo,
+    InsertSandpack
 } from '@mdxeditor/editor';
 import '@mdxeditor/editor/style.css';
 
@@ -191,6 +198,46 @@ export default function SubtopicPage({ content, currentData, topics, topicsData,
         }
     };
 
+
+    console.log('Initializing code block plugin');
+    const codeBlockPluginConfig = codeBlockPlugin({
+        codeBlockEditorComponents: {
+            js: CodeMirrorEditor,  // Используем один редактор для всех
+        },
+    });
+
+    console.log('codeBlockPluginConfig:', codeBlockPluginConfig);
+
+
+    console.log(text);
+    const defaultSnippetContent = `
+export default function App() {
+  return (
+    <div className="App">
+      <h1>Hello CodeSandbox</h1>
+      <h2>Start editing to see some magic happen!</h2>
+    </div>
+  );
+}
+`.trim()
+
+    const simpleSandpackConfig = {
+        defaultPreset: 'react',
+        presets: [
+            {
+                label: 'React',
+                name: 'react',
+                meta: 'live react',
+                sandpackTemplate: 'react',
+                sandpackTheme: 'light',
+                snippetFileName: '/App.js',
+                snippetLanguage: 'jsx',
+                initialSnippetContent: defaultSnippetContent
+            }
+        ]
+    }
+
+
     return (
         <div className="container-fluid">
             <div className="row">
@@ -235,12 +282,16 @@ export default function SubtopicPage({ content, currentData, topics, topicsData,
                                         quotePlugin(),
                                         thematicBreakPlugin(),
                                         markdownShortcutPlugin(),
-                                        codeBlockPlugin(),
                                         linkPlugin(),
                                         tablePlugin(),
                                         frontmatterPlugin(),
                                         linkDialogPlugin(),
+                                        // the default code block language to insert when the user clicks the "insert code block" button
+                                        codeBlockPlugin({ defaultCodeBlockLanguage: 'js' }),
+                                        sandpackPlugin({ sandpackConfig: simpleSandpackConfig }),
+                                        codeMirrorPlugin({ codeBlockLanguages: { js: 'JavaScript', css: 'CSS' } }),
                                         toolbarPlugin({
+
                                             toolbarContents: () => (
                                                 <>
                                                     <BoldItalicUnderlineToggles />
@@ -250,12 +301,9 @@ export default function SubtopicPage({ content, currentData, topics, topicsData,
                                                     <InsertCodeBlock />
                                                     <InsertTable />
                                                     <InsertThematicBreak />
-                                                    {/* <InsertQuote /> */}
-                                                    {/* <Frontmatter /> */}
-                                                    {/* <LinkDialog /> */}
                                                 </>
-                                            )
-                                        })
+                                            ),
+                                        }),
                                     ]}
                                 />
                                 <div className="mt-3">
