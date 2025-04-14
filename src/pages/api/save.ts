@@ -95,13 +95,9 @@ function splitMarkdownSections(content: string): Section[] {
 }
 
 function mergeMarkdownContent(original: string, sectionTitle: string, newContent: string): string {
-  // Извлекаем frontmatter из оригинального файла
   const { frontMatter, restContent } = extractFrontMatter(original);
-  
-  // Разбиваем на секции
   const sections = splitMarkdownSections(restContent);
-  
-  // Обновляем нужную секцию, сохраняя оригинальное форматирование
+
   const sectionIndex = sections.findIndex(s => s.level === 2 && s.title === sectionTitle);
   if (sectionIndex !== -1) {
     sections[sectionIndex] = {
@@ -111,12 +107,25 @@ function mergeMarkdownContent(original: string, sectionTitle: string, newContent
     };
   }
 
-  // Собираем все секции в правильном порядке
-  const allContent = sections.map(section => section.content.join('\n')).join('\n\n');
+  const normalize = (lines: string[]) => {
+    const trimmedStart = lines.slice(); // копируем
+    while (trimmedStart.length && trimmedStart[0].trim() === '') {
+      trimmedStart.shift();
+    }
+    while (trimmedStart.length && trimmedStart[trimmedStart.length - 1].trim() === '') {
+      trimmedStart.pop();
+    }
+    return trimmedStart;
+  };
 
-  // Создаём новый контент, используя оригинальный frontmatter
+  const allContent = sections
+    .map(section => normalize(section.content).join('\n'))
+    .filter(Boolean)
+    .join('\n\n');
+
   return `${frontMatter}\n\n${allContent}`;
 }
+
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "POST") {

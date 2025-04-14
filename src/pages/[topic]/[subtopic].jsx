@@ -142,7 +142,16 @@ export default function SubtopicPage({ content, currentData, topics, topicsData,
 
     const saveContent = async () => {
         try {
-            const contentWithHeader = `## ${subtopic}\n\n${text}`;
+            // 1. Удаляем лишние пробелы по краям
+            let cleaned = text.trim();
+
+            // 2. Заменяем более двух подряд идущих пустых строк на одну
+            cleaned = cleaned.replace(/\n{3,}/g, '\n\n');
+
+            // 3. Убираем пробелы в пустых строках (чтобы не было " \n")
+            cleaned = cleaned.replace(/\n[ \t]+\n/g, '\n\n');
+
+            const contentWithHeader = `## ${subtopic}\n\n${cleaned}`;
             const payload = { slug: `${topic}/${subtopic}`, content: contentWithHeader };
 
             const response = await fetch("/api/save", {
@@ -159,6 +168,7 @@ export default function SubtopicPage({ content, currentData, topics, topicsData,
             setEditMode(false);
             router.replace(router.asPath);
         } catch (error) {
+            console.error('Save error:', error);
             alert('Ошибка при сохранении');
         }
     };
@@ -184,14 +194,12 @@ export default function SubtopicPage({ content, currentData, topics, topicsData,
     return (
         <div className="container-fluid">
             <div className="row">
-                <div className="col-sm-2 col-md-2 col-lg-2">
-                    <Sidebar 
-                        topics={topics} 
-                        topicsData={topicsData} 
-                        currentTopic={topic} 
-                        currentSubtopic={subtopic} 
-                    />
-                </div>
+                <Sidebar
+                    topics={topics}
+                    topicsData={topicsData}
+                    currentTopic={topic}
+                    currentSubtopic={subtopic}
+                />
                 <div className="col-sm-10 col-md-10 col-lg-10">
                     <div className="content-container p-4">
                         <div className="d-flex justify-content-between align-items-center mb-4">
@@ -231,7 +239,7 @@ export default function SubtopicPage({ content, currentData, topics, topicsData,
                                         linkPlugin(),
                                         tablePlugin(),
                                         frontmatterPlugin(),
-                                        linkDialogPlugin(),                                
+                                        linkDialogPlugin(),
                                         toolbarPlugin({
                                             toolbarContents: () => (
                                                 <>
