@@ -1,0 +1,105 @@
+/* Markdown Editor Styles */
+.editor-container {
+    margin-top: 2rem;
+}
+
+/* Editor and preview container */
+.mde-container {
+    display: flex;
+    gap: 2rem;
+}
+
+/* Editor and preview sections */
+.mde-editor,
+.mde-preview {
+    flex: 1;
+    min-width: 300px;
+}
+
+/* Toolbar styles */
+.toolbar-container {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    padding: 0.5rem;
+}
+
+.toolbar-button {
+    padding: 0.5rem;
+    margin: 0 0.25rem;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+    background-color: transparent;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2rem;
+    min-height: 2rem;
+}
+
+.toolbar-button:hover {
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+}
+
+.toolbar-button.active {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    color: white;
+}
+
+/* Editor textarea */
+.editor-textarea {
+    width: 100%;
+    height: 600px;
+    padding: 1rem;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    font-family: inherit;
+    font-size: 1rem;
+    line-height: 1.5;
+    resize: vertical;
+}
+
+/* Preview styles */
+.preview-content {
+    padding: 1rem;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    background-color: white;
+}
+
+/* Code block styles */
+.preview-content pre {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 0.25rem;
+    overflow-x: auto;
+    margin: 1rem 0;
+}
+
+/* Table styles */
+.preview-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+}
+
+.preview-content th,
+.preview-content td {
+    border: 1px solid #dee2e6;
+    padding: 0.5rem;
+    text-align: left;
+}
+
+.preview-content th {
+    background-color: #f8f9fa;
+}
+
+/* Image styles */
+.preview-content img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 1rem 0;
+}

@@ -2,19 +2,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/router";
 
-interface SidebarProps {
-  topics: string[];
-  topicsData: {
-    [key: string]: {
-      title?: string;
-      subtopics?: string[];
-    };
-  };
-  currentTopic?: string;
-  currentSubtopic?: string;
-}
-
-export default function Sidebar({ topics, topicsData, currentTopic, currentSubtopic }: SidebarProps) {
+export default function Sidebar({ topics, topicsData, currentTopic, currentSubtopic }) {
   const [isCreating, setIsCreating] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
@@ -42,7 +30,7 @@ export default function Sidebar({ topics, topicsData, currentTopic, currentSubto
         setNewTitle("");
         setNewContent("");
         setSelectedParent("");
-        
+
         // Показываем сообщение о перенаправлении
         setIsRedirecting(true);
 
@@ -84,41 +72,47 @@ export default function Sidebar({ topics, topicsData, currentTopic, currentSubto
 
   return (
     <>
-      <aside className="col-2 bg-light p-4 border-end">
-        <h2 className="h5 mb-4">Темы</h2>
-        <ul className="list-unstyled mb-3">
-          {topics.map((topic) => (
-            <li key={topic}>
-              <Link
-                href={`/${topic}`}
-                className={`d-block p-2 rounded ${topic === currentTopic ? 'bg-secondary text-white' : 'hover:bg-light'}`}
-              >
-                {topic}
-              </Link>
+      <aside className="col-sm-2 col-md-2 col-lg-2 bg-light p-4 border-end">
+        <div className="position-sticky top-0">
+          <h2 className="h5 mb-4">Темы</h2>
+          <ul className="list-unstyled mb-3">
+            {topics.map((topic) => (
+              <li key={topic}>
+                <Link
+                  href={`/${topic}`}
+                  className={`d-block p-2 rounded ${topic === currentTopic ? 'bg-secondary text-white' : 'hover:bg-light'
+                    }`}
+                >
+                  {topic}
+                </Link>
 
-              {topicsData[topic]?.subtopics && topicsData[topic].subtopics.length > 0 && (
-                <ul className="ms-3 mt-2 list-unstyled">
-                  {topicsData[topic].subtopics.map((subtopic: string, index: number) => (
-                    <li key={index}>
-                      <Link
-                        href={`/${topic}/${subtopic}`}
-                        className={`d-block p-2 text-muted ${topic === currentTopic && subtopic === currentSubtopic ? 'fw-bold' : ''}`}
-                      >
-                        {subtopic}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </li>
-          ))}
-        </ul>
-        <button
-          className="btn btn-primary w-100"
-          onClick={() => setIsCreating(true)}
-        >
-          Добавить страницу
-        </button>
+                {topicsData[topic]?.subtopics && topicsData[topic].subtopics.length > 0 && (
+                  <ul className="ms-3 mt-2 list-unstyled">
+                    {topicsData[topic].subtopics.map((subtopic, index) => (
+                      <li key={index}>
+                        <Link
+                          href={`/${topic}/${subtopic}`}
+                          className={`d-block p-2 rounded ${topic === currentTopic && subtopic === currentSubtopic
+                            ? 'bg-secondary text-white'
+                            : 'hover:bg-light'
+                            }`}
+                        >
+                          {subtopic}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+            ))}
+          </ul>
+          <button
+            className="btn btn-primary w-100"
+            onClick={() => setIsCreating(true)}
+          >
+            Добавить страницу
+          </button>
+        </div>
       </aside>
 
       {isCreating && (

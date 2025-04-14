@@ -1,0 +1,17 @@
+.hljs {
+  padding: 1rem;
+  border-radius: 4px;
+  overflow-x: auto;
+}
+
+pre {
+  background: #f6f8fa !important;
+  padding: 1rem;
+  border-radius: 4px;
+  margin: 1rem 0;
+}
+
+code {
+  font-family: 'Fira Code', monospace;
+  font-size: 14px;
+}

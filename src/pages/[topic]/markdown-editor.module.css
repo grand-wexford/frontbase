@@ -1,0 +1,201 @@
+/* Markdown Editor Styles */
+.editorContainer {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+/* Editor and preview container */
+.mdeContainer {
+    display: flex;
+    gap: 2rem;
+    width: 100%;
+}
+
+/* Editor and preview sections */
+.mdeEditor,
+.mdePreview {
+    flex: 1;
+    min-width: 300px;
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Editor textarea */
+.editorTextarea {
+    width: 100%;
+    height: 600px;
+    padding: 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.25rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-size: 1rem;
+    line-height: 1.5;
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.editorTextarea:focus {
+    border-color: #4299e1;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+}
+
+/* Editor styles */
+.editor {
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background: white;
+    padding: 1rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #2d3748;
+    transition: all 0.2s ease;
+}
+
+.editor:focus {
+    outline: none;
+    border-color: #4299e1;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+}
+
+.editor::placeholder {
+    color: #718096;
+    opacity: 0.8;
+}
+
+/* Toolbar styles */
+.toolbar {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: #f7fafc;
+    border-bottom: 1px solid #e2e8f0;
+    border-radius: 6px 6px 0 0;
+}
+
+.toolbar button {
+    background: none;
+    border: none;
+    padding: 0.5rem;
+    color: #4a5568;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.toolbar button:hover {
+    color: #2d3748;
+}
+
+.toolbar button.active {
+    color: #4299e1;
+}
+
+/* Preview styles */
+.preview {
+    padding: 1rem;
+    overflow-y: auto;
+}
+
+.previewContent {
+    padding: 1rem;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    background-color: white;
+}
+
+.preview p {
+    margin-bottom: 1rem;
+}
+
+.preview h1, .preview h2, .preview h3 {
+    margin-bottom: 1rem;
+    color: #2d3748;
+}
+
+.preview pre {
+    background: #f7fafc;
+    padding: 1rem;
+    border-radius: 0.25rem;
+    overflow-x: auto;
+}
+
+.preview code {
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+    font-size: 0.875em;
+    color: #2d3748;
+}
+
+.preview ul, .preview ol {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+}
+
+.preview blockquote {
+    border-left: 4px solid #4299e1;
+    margin: 1rem 0;
+    padding: 0.5rem 1rem;
+    background: #f7fafc;
+    color: #4a5568;
+}
+
+/* Code block styles */
+.previewContent pre {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 0.25rem;
+    overflow-x: auto;
+    margin: 1rem 0;
+}
+
+/* Table styles */
+.previewContent table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+}
+
+.previewContent th,
+.previewContent td {
+    border: 1px solid #dee2e6;
+    padding: 0.5rem;
+    text-align: left;
+}
+
+.previewContent th {
+    background-color: #f8f9fa;
+}
+
+/* Image styles */
+.previewContent img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 1rem 0;
+}
+
+/* Tab switcher */
+.tab-switcher {
+    display: flex;
+    gap: 1rem;
+    padding: 0.5rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.tab-switcher button {
+    background: none;
+    border: none;
+    padding: 0.5rem 1rem;
+    color: #4a5568;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.tab-switcher button.active {
+    color: #4299e1;
+    border-bottom: 2px solid #4299e1;
+}

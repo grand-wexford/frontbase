@@ -16,11 +16,11 @@ export async function getStaticProps() {
   const topics = files.map((file) => file.replace(/\.md$/, ""));
 
   // Получаем данные для всех тем
-  const topicsData: TopicsData = {};
+  const topicsData = {};
   for (const file of files) {
     const filePath = path.join(CONTENT_DIR, file);
     const fileContent = fs.readFileSync(filePath, "utf8");
-    const { data } = matter(fileContent) as { data: TopicData };
+    const { data } = matter(fileContent);
     topicsData[file.replace(/\.md$/, "")] = data;
   }
 
@@ -32,21 +32,7 @@ export async function getStaticProps() {
   };
 }
 
-interface TopicData {
-  title?: string;
-  subtopics?: string[];
-}
-
-interface TopicsData {
-  [key: string]: TopicData;
-}
-
-interface HomeProps {
-  topics: string[];
-  topicsData: TopicsData;
-}
-
-export default function Home({ topics, topicsData }: HomeProps) {
+export default function Home({ topics, topicsData }) {
   return (
     <div className="container mt-5">
       <h1 className="text-center mb-5">Frontend Interview Helper</h1>

@@ -8,23 +8,6 @@ import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import Sidebar from "../../components/Sidebar";
 
-interface TopicData {
-    title?: string;
-    subtopics?: string[];
-}
-
-interface TopicsData {
-    [key: string]: TopicData;
-}
-
-interface PageProps {
-    content: string;
-    currentData: TopicData;
-    topics: string[];
-    topicsData: TopicsData;
-    topic: string;
-}
-
 const CONTENT_DIR = path.join(process.cwd(), "content");
 
 export async function getStaticPaths() {
@@ -41,7 +24,7 @@ export async function getStaticPaths() {
     return { paths, fallback: false };
 }
 
-export async function getStaticProps({ params }: { params: { topic: string } }) {
+export async function getStaticProps({ params }) {
     const { topic } = params;
     const allFiles = fs.readdirSync(CONTENT_DIR);
     const files = allFiles.filter(file => {
@@ -52,11 +35,11 @@ export async function getStaticProps({ params }: { params: { topic: string } }) 
     const topics = files.map((file) => file.replace(/\.md$/, ""));
 
     // Получаем данные для всех тем
-    const topicsData: TopicsData = {};
+    const topicsData = {};
     for (const file of files) {
         const filePath = path.join(CONTENT_DIR, file);
         const fileContent = fs.readFileSync(filePath, "utf8");
-        const { data } = matter(fileContent) as { data: TopicData };
+        const { data } = matter(fileContent);
         topicsData[file.replace(/\.md$/, "")] = data;
     }
 
@@ -92,7 +75,7 @@ marked.use({
     gfm: true
 });
 
-export default function TopicPage({ content, currentData, topics, topicsData, topic }: PageProps) {
+export default function TopicPage({ content, currentData, topics, topicsData, topic }) {
     const [editMode, setEditMode] = useState(false);
     const [text, setText] = useState(content);
     const router = useRouter();
